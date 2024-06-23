@@ -14,14 +14,14 @@ class SessionRepository extends HttpRepository<ApiClient> {
 
   Future<Session?> getActiveSession() async {
     final uri = Uri.parse("$baseUri/active");
-    final session = await client.get(uri);
+    final response = await client.get(uri);
 
-    if (session.statusCode == 404) {
+    if (response.statusCode == 404) {
       LogUtils.log("No active session found");
       return null;
     }
 
-    final json = jsonDecode(session.body);
+    final json = jsonDecode(response.body);
 
     return Session.fromJson(json);
   }
@@ -69,5 +69,14 @@ class SessionRepository extends HttpRepository<ApiClient> {
         'endDate': endDate?.toIso8601String()
       })
     );
+  }
+
+  Future<List<Session>> getAllSessions() async {
+    final uri = Uri.parse(baseUri);
+
+    final response = await client.get(uri);
+    final List<dynamic> list = jsonDecode(response.body);
+
+    return list.map((json) => Session.fromJson(json)).toList();
   }
 }

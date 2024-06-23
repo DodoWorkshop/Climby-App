@@ -1,4 +1,5 @@
 import 'package:climby/widget/generic/profile_button.dart';
+import 'package:climby/widget/page/history/history_page.dart';
 import 'package:climby/widget/page/session/session_page.dart';
 import 'package:climby/widget/page/settings/settings_page.dart';
 import 'package:climby/widget/page/stats/stats_page.dart';
@@ -22,7 +23,7 @@ class _MainLayoutState extends State<MainLayout> {
           children: [
             SessionPage(),
             StatsPage(),
-            SettingsPage(),
+            HistoryPage(),
           ],
         ),
       ),
@@ -35,7 +36,7 @@ class _MainLayoutState extends State<MainLayout> {
         tabs: [
           Tab(icon: Icon(Icons.play_arrow)),
           Tab(icon: Icon(Icons.bar_chart)),
-          Tab(icon: Icon(Icons.settings)),
+          Tab(icon: Icon(Icons.history)),
         ],
       ),
       leading: const Image(image: AssetImage('assets/logo.png')),

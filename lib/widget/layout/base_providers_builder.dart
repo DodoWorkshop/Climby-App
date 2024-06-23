@@ -1,6 +1,7 @@
 import 'package:climby/bloc/authentication_bloc.dart';
 import 'package:climby/bloc/place_bloc.dart';
 import 'package:climby/bloc/session_bloc.dart';
+import 'package:climby/bloc/session_history_bloc.dart';
 import 'package:climby/client/api_client.dart';
 import 'package:climby/repository/place_repository.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class _BaseProvidersBuilderState extends State<BaseProvidersBuilder> {
   late AuthenticationRepository _authenticationRepository;
   late SessionRepository _sessionRepository;
   late PlaceRepository _placeRepository;
-  
+
   late AuthenticationBloc _authenticationBloc;
 
   @override
@@ -36,7 +37,8 @@ class _BaseProvidersBuilderState extends State<BaseProvidersBuilder> {
     _sessionRepository = SessionRepository(_apiClient);
     _placeRepository = PlaceRepository(_apiClient);
 
-    _authenticationBloc = AuthenticationBloc(_authenticationRepository, _apiClient);
+    _authenticationBloc =
+        AuthenticationBloc(_authenticationRepository, _apiClient);
   }
 
   @override
@@ -52,7 +54,8 @@ class _BaseProvidersBuilderState extends State<BaseProvidersBuilder> {
         providers: [
           BlocProvider.value(value: _authenticationBloc),
           BlocProvider(create: (_) => SessionBloc(_sessionRepository)),
-          BlocProvider(create: (_) => PlaceBloc(_placeRepository))
+          BlocProvider(create: (_) => PlaceBloc(_placeRepository)),
+          BlocProvider(create: (_) => SessionHistoryBloc(_sessionRepository)),
         ],
         child: widget.child,
       ),

@@ -25,28 +25,25 @@ class _ActiveSessionPartState extends State<ActiveSessionPart> {
         return const Text("No Session");
       }
 
-      return Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildSessionInfoCard(context, session),
-            Container(height: 10),
-            _buildEntryInputCard(context, session),
-            Container(height: 10),
-            Expanded(child: _buildSessionEntryList(context, session)),
-            Container(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FilledButton(
-                  onPressed: () => _handleSessionEnd(context, session),
-                  child: const Text('Terminer la session'),
-                )
-              ],
-            ),
-          ],
-        ),
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildSessionInfoCard(context, session),
+          Container(height: 10),
+          _buildEntryInputCard(context, session),
+          Container(height: 10),
+          Expanded(child: _buildSessionEntryList(context, session)),
+          Container(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FilledButton(
+                onPressed: () => _handleSessionEnd(context, session),
+                child: const Text('Terminer la session'),
+              )
+            ],
+          ),
+        ],
       );
     });
   }
@@ -175,8 +172,10 @@ class _ActiveSessionPartState extends State<ActiveSessionPart> {
                         children: session.entries
                             .map(
                               (entry) => ListTile(
-                                leading: Icon(Icons.circle,
-                                    color: Color(entry.difficultyLevel.color)),
+                                leading: Icon(
+                                  Icons.circle,
+                                  color: Color(entry.difficultyLevel.color),
+                                ),
                                 title: Text(
                                     "Terminé à ${DateFormat('kk:mm').format(entry.createdAt)}"),
                                 subtitle: Text(
@@ -244,7 +243,7 @@ class _ActiveSessionPartState extends State<ActiveSessionPart> {
           (entry1, entry2) => entry1.createdAt.compareTo(entry2.createdAt));
       final lastDate = entries.last.createdAt;
 
-      if (lastDate.difference(DateTime.now()).inHours > 0) {
+      if (DateTime.now().difference(lastDate).inHours > 0) {
         showDialog<void>(
           context: context,
           builder: (BuildContext context) {
