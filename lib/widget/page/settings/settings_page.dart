@@ -9,9 +9,7 @@ class SettingsPage extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
-          children: [
-
-          ],
+          children: [],
         ),
       ),
     );

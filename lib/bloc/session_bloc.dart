@@ -3,6 +3,7 @@ import 'package:climby/model/place.dart';
 import 'package:climby/model/session.dart';
 import 'package:climby/model/session_entry.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../repository/session_repository.dart';
 
 class SessionBloc extends Bloc<SessionBlocEvent, Session?> {
@@ -40,7 +41,8 @@ class SessionBloc extends Bloc<SessionBlocEvent, Session?> {
       throw UnimplementedError("There is no active session");
     }
 
-    final SessionEntry entry = await _sessionRepository.addSessionEntry(event.level.id);
+    final SessionEntry entry =
+        await _sessionRepository.addSessionEntry(event.level.id);
     final List<SessionEntry> entries = state!.entries + [entry];
 
     emit(state!.copyWith(entries: entries));
@@ -58,7 +60,8 @@ class SessionBloc extends Bloc<SessionBlocEvent, Session?> {
     add(FetchActiveSessionEvent());
   }
 
-  void _handleEndSessionEvent(EndSessionEvent event, Emitter<Session?> emit) async {
+  void _handleEndSessionEvent(
+      EndSessionEvent event, Emitter<Session?> emit) async {
     if (state == null) {
       throw UnimplementedError("There is no active session");
     }

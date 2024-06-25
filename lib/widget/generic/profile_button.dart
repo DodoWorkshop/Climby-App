@@ -1,4 +1,3 @@
-import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:climby/model/authentication.dart';
 import 'package:climby/repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,8 @@ class ProfileButton extends StatelessWidget {
       builder: (context, state) => PopupMenuButton<Function>(
         icon: CircleAvatar(
           radius: 18,
-          child: ClipOval(child: Image.network(state!.profile.pictureUrl.toString())),
+          child: ClipOval(
+              child: Image.network(state!.profile.pictureUrl.toString())),
         ),
         itemBuilder: (context) => [
           PopupMenuItem<Function>(

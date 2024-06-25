@@ -53,7 +53,9 @@ class _StartSessionPartState extends State<StartSessionPart> {
               child: FilledButton(
                 onPressed: _place != null
                     //? () => widget.startSessionCallback(_place!)
-                    ? () => context.read<SessionBloc>().add(StartSessionEvent(_place!))
+                    ? () => context
+                        .read<SessionBloc>()
+                        .add(StartSessionEvent(_place!))
                     : null,
                 child: const Text("Démarrer une session"),
               ),

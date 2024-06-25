@@ -20,8 +20,9 @@ class SessionPage extends StatelessWidget {
               ? const ActiveSessionPart()
               : Center(
                   child: StartSessionPart(
-                    startSessionCallback: (place) =>
-                        context.read<SessionBloc>().add(StartSessionEvent(place)),
+                    startSessionCallback: (place) => context
+                        .read<SessionBloc>()
+                        .add(StartSessionEvent(place)),
                   ),
                 ),
         ),

@@ -57,7 +57,7 @@ class HistoryPage extends StatelessWidget {
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                       subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start ,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             DateFormat()

@@ -1,7 +1,6 @@
 import 'package:climby/widget/generic/profile_button.dart';
 import 'package:climby/widget/page/history/history_page.dart';
 import 'package:climby/widget/page/session/session_page.dart';
-import 'package:climby/widget/page/settings/settings_page.dart';
 import 'package:climby/widget/page/stats/stats_page.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +39,8 @@ class _MainLayoutState extends State<MainLayout> {
         ],
       ),
       leading: const Image(image: AssetImage('assets/logo.png')),
-      title: Center(child: Text('Climby', style: Theme.of(context).textTheme.titleLarge)),
+      title: Center(
+          child: Text('Climby', style: Theme.of(context).textTheme.titleLarge)),
       actions: const [ProfileButton()],
     );
   }

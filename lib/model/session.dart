@@ -3,7 +3,6 @@ import 'package:climby/model/session_entry.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'session.freezed.dart';
-
 part 'session.g.dart';
 
 @freezed
@@ -23,6 +22,7 @@ class Session with _$Session {
 
   bool get isDone => endedAt != null;
 
+  // TODO: cache this
   int computeScore() => entries.isEmpty
       ? 0
       : entries
