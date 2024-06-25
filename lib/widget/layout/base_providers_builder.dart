@@ -2,8 +2,10 @@ import 'package:climby/bloc/authentication_bloc.dart';
 import 'package:climby/bloc/place_bloc.dart';
 import 'package:climby/bloc/session_bloc.dart';
 import 'package:climby/bloc/session_history_bloc.dart';
+import 'package:climby/bloc/stat_bloc.dart';
 import 'package:climby/client/api_client.dart';
 import 'package:climby/repository/place_repository.dart';
+import 'package:climby/util/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,7 +45,7 @@ class _BaseProvidersBuilderState extends State<BaseProvidersBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    print("Rebuild providers");
+    LogUtils.log("Rebuild providers");
 
     return MultiRepositoryProvider(
       providers: [
@@ -56,6 +58,7 @@ class _BaseProvidersBuilderState extends State<BaseProvidersBuilder> {
           BlocProvider(create: (_) => SessionBloc(_sessionRepository)),
           BlocProvider(create: (_) => PlaceBloc(_placeRepository)),
           BlocProvider(create: (_) => SessionHistoryBloc(_sessionRepository)),
+          BlocProvider(create: (_) => StatBloc(_sessionRepository)),
         ],
         child: widget.child,
       ),

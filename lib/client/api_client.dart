@@ -23,8 +23,8 @@ class ApiClient extends http.BaseClient {
   Map<String, String> _getDefaultHeaders() {
     return {
       'Authorization': 'Bearer $_token',
-      'Content-Type' : 'application/json',
-      'Accept' : 'application/json',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     };
   }
 

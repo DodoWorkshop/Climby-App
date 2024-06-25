@@ -15,10 +15,10 @@ class SessionHistoryBloc
   void _handleFetchHistory(
       FetchHistoryEvent event, Emitter<SessionHistoryBlocState> emit) async {
     final sessions = await sessionRepository.getAllSessions();
-    final history = sessions.where((session) => session.isDone)
-        .toList();
+    final history = sessions.where((session) => session.isDone).toList();
 
-    history.sort((session1, session2) => session1.startedAt.compareTo(session2.startedAt));
+    history.sort((session1, session2) =>
+        session1.startedAt.compareTo(session2.startedAt));
 
     emit(SessionHistoryBlocState.value(history));
   }

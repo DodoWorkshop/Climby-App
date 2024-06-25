@@ -30,9 +30,7 @@ class SessionRepository extends HttpRepository<ApiClient> {
     final uri = Uri.parse("$baseUri/start");
     final response = await client.post(
       uri,
-      body: jsonEncode({
-        'placeId': placeId
-      }),
+      body: jsonEncode({'placeId': placeId}),
     );
 
     final json = jsonDecode(response.body);
@@ -40,14 +38,12 @@ class SessionRepository extends HttpRepository<ApiClient> {
     return Session.fromJson(json);
   }
 
-  Future<SessionEntry> addSessionEntry(int difficultyLevelId) async{
+  Future<SessionEntry> addSessionEntry(int difficultyLevelId) async {
     final uri = Uri.parse("$baseUri/active/entries");
 
     final response = await client.post(
       uri,
-      body: jsonEncode({
-        'difficultyLevelId': difficultyLevelId
-      }),
+      body: jsonEncode({'difficultyLevelId': difficultyLevelId}),
     );
 
     final json = jsonDecode(response.body);
@@ -55,7 +51,7 @@ class SessionRepository extends HttpRepository<ApiClient> {
     return SessionEntry.fromJson(json);
   }
 
-  Future<void> deleteSessionEntry(int entryId) async{
+  Future<void> deleteSessionEntry(int entryId) async {
     final uri = Uri.parse("$baseUri/active/entries/$entryId");
 
     await client.delete(uri);
@@ -65,10 +61,7 @@ class SessionRepository extends HttpRepository<ApiClient> {
     final uri = Uri.parse("$baseUri/active/stop");
 
     await client.post(uri,
-      body: jsonEncode({
-        'endDate': endDate?.toIso8601String()
-      })
-    );
+        body: jsonEncode({'endDate': endDate?.toIso8601String()}));
   }
 
   Future<List<Session>> getAllSessions() async {

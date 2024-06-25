@@ -1,10 +1,24 @@
-import 'package:climby/widget/page/stats/tmp/test_chart.dart';
-import 'package:climby/widget/page/stats/tmp/test_chart_2.dart';
+import 'package:climby/bloc/stat_bloc.dart';
+import 'package:climby/widget/page/stats/card/difficulty_chart.dart';
+import 'package:climby/widget/page/stats/card/general_stats.dart';
+import 'package:climby/widget/page/stats/card/score_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-class StatsPage extends StatelessWidget {
+class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _StatsPageState();
+}
+
+class _StatsPageState extends State<StatsPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<StatBloc>().add(FetchStatsEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +28,14 @@ class StatsPage extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Text("Stats", style:  Theme.of(context).textTheme.titleLarge),
+              Text("Statistiques",
+                  style: Theme.of(context).textTheme.titleLarge),
               Container(height: 12),
-              LineChartSample4(),
+              const GeneralStats(),
               Container(height: 12),
-              RadarChartSample1()
+              const ScoreChart(),
+              Container(height: 12),
+              const DifficultyChart(),
             ],
           ),
         ),
