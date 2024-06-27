@@ -12,16 +12,20 @@ class SessionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<SessionBloc>().add(FetchActiveSessionEvent());
 
-    return Scaffold(
-      body: BlocBuilder<SessionBloc, Session?>(
-        builder: (context, session) => session != null
-            ? const ActiveSessionPart()
-            : Center(
-                child: StartSessionPart(
-                  startSessionCallback: (place) =>
-                      context.read<SessionBloc>().add(StartSessionEvent(place)),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Scaffold(
+        body: BlocBuilder<SessionBloc, Session?>(
+          builder: (context, session) => session != null
+              ? const ActiveSessionPart()
+              : Center(
+                  child: StartSessionPart(
+                    startSessionCallback: (place) => context
+                        .read<SessionBloc>()
+                        .add(StartSessionEvent(place)),
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }

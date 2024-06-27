@@ -14,4 +14,3 @@ class DifficultyLevel with _$DifficultyLevel {
   factory DifficultyLevel.fromJson(Map<String, Object?> json) =>
       _$DifficultyLevelFromJson(json);
 }
-
