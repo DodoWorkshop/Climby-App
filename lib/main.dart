@@ -4,9 +4,11 @@ import 'package:climby/widget/layout/base_providers_builder.dart';
 import 'package:climby/widget/layout/main_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   await dotenv.load();
+  await initializeDateFormatting('fr_FR', null);
 
   runApp(const App());
 }

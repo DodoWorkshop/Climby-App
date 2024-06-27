@@ -13,6 +13,5 @@ class Place with _$Place {
     required List<DifficultyLevel> difficultyLevels,
   }) = _Place;
 
-  factory Place.fromJson(Map<String, Object?> json) =>
-      _$PlaceFromJson(json);
+  factory Place.fromJson(Map<String, Object?> json) => _$PlaceFromJson(json);
 }
