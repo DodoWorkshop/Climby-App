@@ -47,6 +47,7 @@ dependencies:
   json_annotation: ^4.9.0
   http: ^1.2.1
   fl_chart: ^0.68.0
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -102,3 +103,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/logo.png"
