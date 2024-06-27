@@ -20,7 +20,10 @@ class _DifficultyChartState extends State<DifficultyChart> {
   Widget build(BuildContext context) {
     return BlocListener<StatBloc, StatBlocState>(
       listener: (context, state) =>
-          setState(() => _place = state.sessionsPerPlace.keys.first),
+          setState(() => _place = state.sessionsPerPlace.isNotEmpty
+              ? state.sessionsPerPlace.keys.first
+              : null
+          ),
       listenWhen: (_, __) => _place == null,
       child: StatCard(
         title: "Répartition de la difficulté",

@@ -26,6 +26,12 @@ class _ScoreChartState extends State<ScoreChart> {
       BuildContext context, StatBlocState state) async {
     final theme = Theme.of(context);
 
+    if (state.sessionsPerPlace.isEmpty) {
+      return const Center(
+        child: Text("Quantité de donnée insuffisante"),
+      );
+    }
+
     var best = 0;
     final points =
         state.allSessions.where((session) => session.isDone).map((session) {

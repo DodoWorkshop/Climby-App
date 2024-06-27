@@ -18,6 +18,12 @@ class GeneralStats extends StatelessWidget {
       BuildContext context, StatBlocState state) async {
     final sessionAmount = state.allSessions.length;
 
+    if (sessionAmount == 0) {
+      return const Center(
+        child: Text("Quantité de donnée insuffisante"),
+      );
+    }
+
     final blocAmount = state.allSessions
         .map((session) => session.entries.length)
         .reduce((a, b) => a + b);
