@@ -4,12 +4,16 @@ import 'package:climby/repository/authentication_repository.dart';
 import 'package:climby/util/log_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'notification_bloc.dart';
+
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationBlocState> {
   final AuthenticationRepository _authenticationRepository;
   final ApiClient _apiClient;
+  final NotificationBloc _notificationBloc;
 
-  AuthenticationBloc(this._authenticationRepository, this._apiClient)
+  AuthenticationBloc(
+      this._authenticationRepository, this._apiClient, this._notificationBloc)
       : super(UnauthenticatedBloc(false)) {
     on<LoginEvent>(_handleLogin);
     on<LogoutEvent>(_handleLogout);
@@ -28,6 +32,8 @@ class AuthenticationBloc
       _apiClient.token = newState.jwt;
 
       emit(newState);
+
+      _notificationBloc.add(SendSuccessNotificationEvent("Connexion réussie"));
     } catch (e) {
       LogUtils.logError(e);
       emit(UnauthenticatedBloc(false));
