@@ -1,5 +1,3 @@
-import 'package:climby/model/authentication.dart';
-import 'package:climby/repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,23 +8,29 @@ class ProfileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, Authentication?>(
-      builder: (context, state) => PopupMenuButton<Function>(
-        icon: CircleAvatar(
-          radius: 18,
-          child: ClipOval(
-              child: Image.network(state!.profile.pictureUrl.toString())),
-        ),
-        itemBuilder: (context) => [
-          PopupMenuItem<Function>(
-            value: context.read<AuthenticationRepository>().logout,
-            child: const ListTile(
-              title: Text('Déconnexion'),
+    return BlocBuilder<AuthenticationBloc, AuthenticationBlocState>(
+      builder: (context, state) {
+        if (state is AuthenticatedState) {
+          return PopupMenuButton<Function>(
+            icon: CircleAvatar(
+              radius: 18,
+              child: ClipOval(
+                  child: Image.network(state.profile.pictureUrl.toString())),
             ),
-          ),
-        ],
-        onSelected: (function) => function.call(),
-      ),
+            itemBuilder: (context) => [
+              PopupMenuItem<Function>(
+                value: () =>
+                    context.read<AuthenticationBloc>().add(LogoutEvent()),
+                child: const ListTile(
+                  title: Text('Déconnexion'),
+                ),
+              ),
+            ],
+            onSelected: (function) => function.call(),
+          );
+        }
+        return Container();
+      },
     );
   }
 }

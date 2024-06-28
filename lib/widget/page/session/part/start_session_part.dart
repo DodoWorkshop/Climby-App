@@ -6,9 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../model/place.dart';
 
 class StartSessionPart extends StatefulWidget {
-  final Function(Place place) startSessionCallback;
-
-  const StartSessionPart({super.key, required this.startSessionCallback});
+  const StartSessionPart({super.key});
 
   @override
   State<StatefulWidget> createState() => _StartSessionPartState();
@@ -31,13 +29,14 @@ class _StartSessionPartState extends State<StartSessionPart> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text("Choisir une salle",
-                style: Theme.of(context).textTheme.labelLarge),
-            BlocBuilder<PlaceBloc, PlaceBlocState>(builder: (context, state) {
-              return DropdownMenu(
-                width: 200,
+            Text(
+              "Choisir une salle",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            BlocBuilder<PlaceBloc, PlaceBlocState>(
+              builder: (context, state) => DropdownMenu(
                 dropdownMenuEntries: state.places
                     .map((place) => DropdownMenuEntry<Place>(
                           value: place,
@@ -45,14 +44,14 @@ class _StartSessionPartState extends State<StartSessionPart> {
                         ))
                     .toList(),
                 onSelected: (place) => setState(() => _place = place),
-              );
-            }),
+                trailingIcon:
+                    state.isLoading ? const CircularProgressIndicator() : null,
+              ),
+            ),
             Padding(
-              padding:
-                  const EdgeInsets.only(top: 20, left: 8, right: 8, bottom: 8),
+              padding: const EdgeInsets.only(top: 20),
               child: FilledButton(
                 onPressed: _place != null
-                    //? () => widget.startSessionCallback(_place!)
                     ? () => context
                         .read<SessionBloc>()
                         .add(StartSessionEvent(_place!))

@@ -1,7 +1,6 @@
+import 'package:climby/bloc/authentication_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../repository/authentication_repository.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -21,7 +20,8 @@ class LoginPage extends StatelessWidget {
             const Image(image: AssetImage('assets/logo.png')),
             Container(height: 10),
             FilledButton(
-              onPressed: context.read<AuthenticationRepository>().login,
+              onPressed: () =>
+                  context.read<AuthenticationBloc>().add(LoginEvent()),
               child: const Text('Connexion'),
             ),
           ],

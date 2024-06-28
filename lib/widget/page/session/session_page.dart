@@ -1,5 +1,4 @@
 import 'package:climby/bloc/session_bloc.dart';
-import 'package:climby/model/session.dart';
 import 'package:climby/widget/page/session/part/active_session_part.dart';
 import 'package:climby/widget/page/session/part/start_session_part.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +14,17 @@ class SessionPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Scaffold(
-        body: BlocBuilder<SessionBloc, Session?>(
-          builder: (context, session) => session != null
-              ? const ActiveSessionPart()
-              : Center(
-                  child: StartSessionPart(
-                    startSessionCallback: (place) => context
-                        .read<SessionBloc>()
-                        .add(StartSessionEvent(place)),
-                  ),
-                ),
+        body: BlocBuilder<SessionBloc, SessionBlocState>(
+          builder: (context, state) {
+            switch (state) {
+              case NoSessionState noSessionState:
+                return noSessionState.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : const Center(child: StartSessionPart());
+              case ActiveSessionState _:
+                return const ActiveSessionPart();
+            }
+          },
         ),
       ),
     );

@@ -12,7 +12,9 @@ class StatBloc extends Bloc<_StatBlocEvent, StatBlocState> {
   }
 
   void _handleFetchStats(
-      FetchStatsEvent event, Emitter<StatBlocState> emit) async {
+    FetchStatsEvent event,
+    Emitter<StatBlocState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true));
 
     final allSessions = await sessionRepository.getAllSessions();
