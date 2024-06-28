@@ -12,7 +12,9 @@ class StatBloc extends Bloc<_StatBlocEvent, StatBlocState> {
   }
 
   void _handleFetchStats(
-      FetchStatsEvent event, Emitter<StatBlocState> emit) async {
+    FetchStatsEvent event,
+    Emitter<StatBlocState> emit,
+  ) async {
     emit(state.copyWith(isLoading: true));
 
     final allSessions = await sessionRepository.getAllSessions();
@@ -70,7 +72,8 @@ class StatBlocState {
     Map<Place, List<Session>>? sessionsPerPlace,
   }) =>
       StatBlocState(
-          isLoading: isLoading ?? this.isLoading,
-          allSessions: allSessions ?? this.allSessions,
-          sessionsPerPlace: sessionsPerPlace ?? this.sessionsPerPlace);
+        isLoading: isLoading ?? this.isLoading,
+        allSessions: allSessions ?? this.allSessions,
+        sessionsPerPlace: sessionsPerPlace ?? this.sessionsPerPlace,
+      );
 }

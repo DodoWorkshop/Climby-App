@@ -1,45 +1,53 @@
-import 'dart:async';
-
+import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:climby/client/api_client.dart';
-import 'package:climby/model/authentication.dart';
 import 'package:climby/repository/authentication_repository.dart';
+import 'package:climby/util/log_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, Authentication?> {
+class AuthenticationBloc
+    extends Bloc<AuthenticationEvent, AuthenticationBlocState> {
   final AuthenticationRepository _authenticationRepository;
   final ApiClient _apiClient;
 
-  late StreamSubscription<Authentication?> _authenticationSubscription;
-
   AuthenticationBloc(this._authenticationRepository, this._apiClient)
-      : super(null) {
-    on<_AuthenticationChanged>(_onAuthenticationChanged);
-    on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
-    _authenticationSubscription = _authenticationRepository.auth.listen(
-      (auth) => add(_AuthenticationChanged(auth)),
-    );
+      : super(UnauthenticatedBloc(false)) {
+    on<LoginEvent>(_handleLogin);
+    on<LogoutEvent>(_handleLogout);
   }
 
-  void _onAuthenticationChanged(
-    _AuthenticationChanged event,
-    Emitter<Authentication?> emit,
-  ) {
-    _apiClient.token = event.authentication?.jwt;
+  void _handleLogin(
+      LoginEvent event, Emitter<AuthenticationBlocState> emit) async {
+    emit(UnauthenticatedBloc(true));
 
-    emit(event.authentication);
+    try {
+      final credentials = await _authenticationRepository.login();
+      final newState =
+          AuthenticatedState(credentials.user, credentials.accessToken);
+
+      // Set api token
+      _apiClient.token = newState.jwt;
+
+      emit(newState);
+    } catch (e) {
+      LogUtils.logError(e);
+      emit(UnauthenticatedBloc(false));
+    }
   }
 
-  void _onAuthenticationLogoutRequested(
-    AuthenticationLogoutRequested event,
-    Emitter<Authentication?> emit,
-  ) {
-    _authenticationRepository.logout();
-  }
+  void _handleLogout(
+      LogoutEvent event, Emitter<AuthenticationBlocState> emit) async {
+    emit(UnauthenticatedBloc(true));
 
-  @override
-  Future<void> close() {
-    _authenticationSubscription.cancel();
-    return super.close();
+    try {
+      await _authenticationRepository.logout();
+
+      // Set api token
+      _apiClient.token = null;
+    } catch (e) {
+      LogUtils.logError(e);
+    }
+
+    emit(UnauthenticatedBloc(false));
   }
 }
 
@@ -47,10 +55,21 @@ sealed class AuthenticationEvent {
   const AuthenticationEvent();
 }
 
-final class _AuthenticationChanged extends AuthenticationEvent {
-  const _AuthenticationChanged(this.authentication);
+class LoginEvent extends AuthenticationEvent {}
 
-  final Authentication? authentication;
+class LogoutEvent extends AuthenticationEvent {}
+
+abstract class AuthenticationBlocState {}
+
+class AuthenticatedState extends AuthenticationBlocState {
+  final UserProfile profile;
+  final String jwt;
+
+  AuthenticatedState(this.profile, this.jwt);
 }
 
-final class AuthenticationLogoutRequested extends AuthenticationEvent {}
+class UnauthenticatedBloc extends AuthenticationBlocState {
+  final bool isConnecting;
+
+  UnauthenticatedBloc(this.isConnecting);
+}

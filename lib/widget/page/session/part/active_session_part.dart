@@ -20,31 +20,35 @@ class _ActiveSessionPartState extends State<ActiveSessionPart> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SessionBloc, Session?>(builder: (context, session) {
-      if (session == null) {
-        return const Text("No Session");
-      }
+    return BlocBuilder<SessionBloc, SessionBlocState>(
+        builder: (context, state) {
+      switch (state) {
+        case NoSessionState _:
+          return const Text("No Session");
+        case ActiveSessionState activeSessionState:
+          final session = activeSessionState.activeSession;
 
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildSessionInfoCard(context, session),
-          Container(height: 10),
-          _buildEntryInputCard(context, session),
-          Container(height: 10),
-          Expanded(child: _buildSessionEntryList(context, session)),
-          Container(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              FilledButton(
-                onPressed: () => _handleSessionEnd(context, session),
-                child: const Text('Terminer la session'),
-              )
+              _buildSessionInfoCard(context, session),
+              Container(height: 10),
+              _buildEntryInputCard(context, session),
+              Container(height: 10),
+              Expanded(child: _buildSessionEntryList(context, session)),
+              Container(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FilledButton(
+                    onPressed: () => _handleSessionEnd(context, session),
+                    child: const Text('Terminer la session'),
+                  )
+                ],
+              ),
             ],
-          ),
-        ],
-      );
+          );
+      }
     });
   }
 

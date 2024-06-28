@@ -9,4 +9,8 @@ abstract final class LogUtils {
   static void logObj(Object obj) {
     developer.log(jsonEncode(obj), name: 'info');
   }
+
+  static void logError(Object e) {
+    developer.log(e.toString(), error: e);
+  }
 }
