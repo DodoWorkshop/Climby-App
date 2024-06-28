@@ -29,31 +29,31 @@ class ApiClient extends http.BaseClient {
   }
 
   @override
-  Future<http.StreamedResponse> send(http.BaseRequest baseRequest) {
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
     if (_token == null) {
       throw UnimplementedError(
           "A token should be provided in order to access Climby API");
     }
 
-    final url = Uri.parse(_baseUrl + baseRequest.url.toString());
+    final url = Uri.parse(_baseUrl + request.url.toString());
 
-    LogUtils.log("${baseRequest.method} - $url");
+    LogUtils.log("${request.method} - $url");
 
-    if (baseRequest is http.Request) {
-      final newRequest = http.Request(baseRequest.method, url)
-        ..headers.addAll(baseRequest.headers)
+    if (request is http.Request) {
+      final newRequest = http.Request(request.method, url)
+        ..headers.addAll(request.headers)
         ..headers.addAll(_getDefaultHeaders())
-        ..bodyBytes = baseRequest.bodyBytes
-        ..encoding = baseRequest.encoding;
+        ..bodyBytes = request.bodyBytes
+        ..encoding = request.encoding;
 
       return _client.send(newRequest).then(
         (val) {
-          LogUtils.log("${baseRequest.method} - $url: ${val.statusCode}");
+          LogUtils.log("${request.method} - $url: ${val.statusCode}");
           return val;
         },
         onError: (e) {
           LogUtils.log(
-              "${baseRequest.method} - $url: ${e.statusCode} -> ${e.toString()}");
+              "${request.method} - $url: ${e.statusCode} -> ${e.toString()}");
           return e;
         },
       );

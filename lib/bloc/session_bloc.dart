@@ -3,14 +3,18 @@ import 'package:climby/model/place.dart';
 import 'package:climby/model/session.dart';
 import 'package:climby/model/session_entry.dart';
 import 'package:climby/util/log_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../repository/session_repository.dart';
+import 'notification_bloc.dart';
 
 class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
   final SessionRepository _sessionRepository;
+  final NotificationBloc _notificationBloc;
 
-  SessionBloc(this._sessionRepository) : super(NoSessionState(false)) {
+  SessionBloc(this._sessionRepository, this._notificationBloc)
+      : super(NoSessionState(false)) {
     on<FetchActiveSessionEvent>(_handleFetchActiveSessionEvent);
     on<StartSessionEvent>(_handleStartSessionEvent);
     on<AddEntryOnSessionEvent>(_handleAddEntryOnActiveSessionEvent);
@@ -30,7 +34,12 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
               : emit(
                   ActiveSessionState(activeSession),
                 ),
-          onError: LogUtils.logError,
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors de la récupération de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
         );
   }
 
@@ -39,14 +48,33 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
     Emitter<SessionBlocState> emit,
   ) async {
     if (state is ActiveSessionState) {
-      throw UnimplementedError("There is already an active session");
+      LogUtils.logError(
+          UnimplementedError("There is already an active session"));
+
+      _notificationBloc.add(
+        SendErrorNotificationEvent(
+          "Une erreur s'est produite lors du démarrage de la session",
+          leadingIcon: Icons.error,
+        ),
+      );
     }
 
     emit(NoSessionState(true));
 
     await _sessionRepository.startSession(event.place.id).then(
-          (session) => emit(ActiveSessionState(session)),
-          onError: LogUtils.logError,
+          (session) => {
+            emit(ActiveSessionState(session)),
+            _notificationBloc.add(SendSuccessNotificationEvent(
+              "Session démarrée!",
+              leadingIcon: Icons.directions_run,
+            ))
+          },
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors du démarrage de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
         );
   }
 
@@ -56,7 +84,13 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
   ) async {
     switch (state) {
       case NoSessionState _:
-        throw UnimplementedError("There is no active session");
+        LogUtils.logError(UnimplementedError("There is no active session"));
+        _notificationBloc.add(
+          SendErrorNotificationEvent(
+            "Une erreur s'est produite lors de la modification de la session",
+            leadingIcon: Icons.error,
+          ),
+        );
       case ActiveSessionState activeSessionState:
         await _sessionRepository.addSessionEntry(event.level.id).then(
           (entry) {
@@ -64,7 +98,12 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
                 entries: activeSessionState.activeSession.entries + [entry]);
             emit(ActiveSessionState(session));
           },
-          onError: LogUtils.logError,
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors de la modification de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
         );
     }
   }
@@ -75,12 +114,23 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
   ) async {
     switch (state) {
       case NoSessionState _:
-        throw UnimplementedError("There is no active session");
+        LogUtils.logError(UnimplementedError("There is no active session"));
+        _notificationBloc.add(
+          SendErrorNotificationEvent(
+            "Une erreur s'est produite lors de la modification de la session",
+            leadingIcon: Icons.error,
+          ),
+        );
       case ActiveSessionState _:
         await _sessionRepository.deleteSessionEntry(event.entry.id).then(
               // Fetch session updates
               (_) => add(FetchActiveSessionEvent()),
-              onError: LogUtils.logError,
+              onError: (e) => _notificationBloc.add(
+                SendErrorNotificationEvent(
+                  "Une erreur s'est produite lors de la modification de la session",
+                  leadingIcon: Icons.error,
+                ),
+              ),
             );
     }
   }
@@ -91,13 +141,30 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
   ) async {
     switch (state) {
       case NoSessionState _:
-        throw UnimplementedError("There is no active session");
+        LogUtils.logError(UnimplementedError("There is no active session"));
+        _notificationBloc.add(
+          SendErrorNotificationEvent(
+            "Une erreur s'est produite lors de la clôture de la session",
+            leadingIcon: Icons.error,
+          ),
+        );
       case ActiveSessionState _:
         await _sessionRepository.endSession(event.endDate).then(
-              // Fetch session updates
-              (_) => add(FetchActiveSessionEvent()),
-              onError: LogUtils.logError,
-            );
+          // Fetch session updates
+          (_) {
+            add(FetchActiveSessionEvent());
+            _notificationBloc.add(SendSuccessNotificationEvent(
+              "Session Terminée!",
+              leadingIcon: Icons.directions_run,
+            ));
+          },
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors de la clôture de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
+        );
     }
   }
 }
