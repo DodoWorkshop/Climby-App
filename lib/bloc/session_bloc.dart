@@ -2,14 +2,19 @@ import 'package:climby/model/difficulty_level.dart';
 import 'package:climby/model/place.dart';
 import 'package:climby/model/session.dart';
 import 'package:climby/model/session_entry.dart';
+import 'package:climby/util/log_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../repository/session_repository.dart';
+import 'notification_bloc.dart';
 
-class SessionBloc extends Bloc<SessionBlocEvent, Session?> {
+class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
   final SessionRepository _sessionRepository;
+  final NotificationBloc _notificationBloc;
 
-  SessionBloc(this._sessionRepository) : super(null) {
+  SessionBloc(this._sessionRepository, this._notificationBloc)
+      : super(NoSessionState(false)) {
     on<FetchActiveSessionEvent>(_handleFetchActiveSessionEvent);
     on<StartSessionEvent>(_handleStartSessionEvent);
     on<AddEntryOnSessionEvent>(_handleAddEntryOnActiveSessionEvent);
@@ -18,58 +23,149 @@ class SessionBloc extends Bloc<SessionBlocEvent, Session?> {
   }
 
   void _handleFetchActiveSessionEvent(
-      FetchActiveSessionEvent event, Emitter<Session?> emit) async {
-    final activeSession = await _sessionRepository.getActiveSession();
+    FetchActiveSessionEvent event,
+    Emitter<SessionBlocState> emit,
+  ) async {
+    emit(NoSessionState(true));
 
-    emit(activeSession);
+    await _sessionRepository.getActiveSession().then(
+          (activeSession) => activeSession == null
+              ? emit(NoSessionState(false))
+              : emit(
+                  ActiveSessionState(activeSession),
+                ),
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors de la récupération de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
+        );
   }
 
   void _handleStartSessionEvent(
-      StartSessionEvent event, Emitter<Session?> emit) async {
-    if (state != null) {
-      throw UnimplementedError("There is already an active session");
+    StartSessionEvent event,
+    Emitter<SessionBlocState> emit,
+  ) async {
+    if (state is ActiveSessionState) {
+      LogUtils.logError(
+          UnimplementedError("There is already an active session"));
+
+      _notificationBloc.add(
+        SendErrorNotificationEvent(
+          "Une erreur s'est produite lors du démarrage de la session",
+          leadingIcon: Icons.error,
+        ),
+      );
     }
 
-    final session = await _sessionRepository.startSession(event.place.id);
+    emit(NoSessionState(true));
 
-    emit(session);
+    await _sessionRepository.startSession(event.place.id).then(
+          (session) => {
+            emit(ActiveSessionState(session)),
+            _notificationBloc.add(SendSuccessNotificationEvent(
+              "Session démarrée!",
+              leadingIcon: Icons.directions_run,
+            ))
+          },
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors du démarrage de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
+        );
   }
 
   void _handleAddEntryOnActiveSessionEvent(
-      AddEntryOnSessionEvent event, Emitter<Session?> emit) async {
-    if (state == null) {
-      throw UnimplementedError("There is no active session");
+    AddEntryOnSessionEvent event,
+    Emitter<SessionBlocState> emit,
+  ) async {
+    switch (state) {
+      case NoSessionState _:
+        LogUtils.logError(UnimplementedError("There is no active session"));
+        _notificationBloc.add(
+          SendErrorNotificationEvent(
+            "Une erreur s'est produite lors de la modification de la session",
+            leadingIcon: Icons.error,
+          ),
+        );
+      case ActiveSessionState activeSessionState:
+        await _sessionRepository.addSessionEntry(event.level.id).then(
+          (entry) {
+            final session = activeSessionState.activeSession.copyWith(
+                entries: activeSessionState.activeSession.entries + [entry]);
+            emit(ActiveSessionState(session));
+          },
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors de la modification de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
+        );
     }
-
-    final SessionEntry entry =
-        await _sessionRepository.addSessionEntry(event.level.id);
-    final List<SessionEntry> entries = state!.entries + [entry];
-
-    emit(state!.copyWith(entries: entries));
   }
 
   void _handleRemoveEntryFromSessionEvent(
-      RemoveEntryFromActiveSessionEvent event, Emitter<Session?> emit) async {
-    if (state == null) {
-      throw UnimplementedError("There is no active session");
+    RemoveEntryFromActiveSessionEvent event,
+    Emitter<SessionBlocState> emit,
+  ) async {
+    switch (state) {
+      case NoSessionState _:
+        LogUtils.logError(UnimplementedError("There is no active session"));
+        _notificationBloc.add(
+          SendErrorNotificationEvent(
+            "Une erreur s'est produite lors de la modification de la session",
+            leadingIcon: Icons.error,
+          ),
+        );
+      case ActiveSessionState _:
+        await _sessionRepository.deleteSessionEntry(event.entry.id).then(
+              // Fetch session updates
+              (_) => add(FetchActiveSessionEvent()),
+              onError: (e) => _notificationBloc.add(
+                SendErrorNotificationEvent(
+                  "Une erreur s'est produite lors de la modification de la session",
+                  leadingIcon: Icons.error,
+                ),
+              ),
+            );
     }
-
-    await _sessionRepository.deleteSessionEntry(event.entry.id);
-
-    // Fetch session updates
-    add(FetchActiveSessionEvent());
   }
 
   void _handleEndSessionEvent(
-      EndSessionEvent event, Emitter<Session?> emit) async {
-    if (state == null) {
-      throw UnimplementedError("There is no active session");
+    EndSessionEvent event,
+    Emitter<SessionBlocState> emit,
+  ) async {
+    switch (state) {
+      case NoSessionState _:
+        LogUtils.logError(UnimplementedError("There is no active session"));
+        _notificationBloc.add(
+          SendErrorNotificationEvent(
+            "Une erreur s'est produite lors de la clôture de la session",
+            leadingIcon: Icons.error,
+          ),
+        );
+      case ActiveSessionState _:
+        await _sessionRepository.endSession(event.endDate).then(
+          // Fetch session updates
+          (_) {
+            add(FetchActiveSessionEvent());
+            _notificationBloc.add(SendSuccessNotificationEvent(
+              "Session Terminée!",
+              leadingIcon: Icons.directions_run,
+            ));
+          },
+          onError: (e) => _notificationBloc.add(
+            SendErrorNotificationEvent(
+              "Une erreur s'est produite lors de la clôture de la session",
+              leadingIcon: Icons.error,
+            ),
+          ),
+        );
     }
-
-    await _sessionRepository.endSession(event.endDate);
-
-    // Fetch session updates
-    add(FetchActiveSessionEvent());
   }
 }
 
@@ -99,4 +195,18 @@ class EndSessionEvent extends SessionBlocEvent {
   final DateTime? endDate;
 
   EndSessionEvent({this.endDate});
+}
+
+sealed class SessionBlocState {}
+
+class NoSessionState extends SessionBlocState {
+  final bool isLoading;
+
+  NoSessionState(this.isLoading);
+}
+
+class ActiveSessionState extends SessionBlocState {
+  final Session activeSession;
+
+  ActiveSessionState(this.activeSession);
 }

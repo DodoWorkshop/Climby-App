@@ -2,6 +2,7 @@ import 'package:climby/theme/app_theme.dart';
 import 'package:climby/widget/layout/authentication_controller.dart';
 import 'package:climby/widget/layout/base_providers_builder.dart';
 import 'package:climby/widget/layout/main_layout.dart';
+import 'package:climby/widget/layout/notification_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -22,8 +23,10 @@ class App extends StatelessWidget {
       title: 'Climby',
       theme: appTheme,
       home: const BaseProvidersBuilder(
-        child: AuthenticationController(
-          child: MainLayout(),
+        child: NotificationWrapper(
+          child: AuthenticationController(
+            child: MainLayout(),
+          ),
         ),
       ),
     );
