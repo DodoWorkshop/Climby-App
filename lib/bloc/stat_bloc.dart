@@ -72,7 +72,8 @@ class StatBlocState {
     Map<Place, List<Session>>? sessionsPerPlace,
   }) =>
       StatBlocState(
-          isLoading: isLoading ?? this.isLoading,
-          allSessions: allSessions ?? this.allSessions,
-          sessionsPerPlace: sessionsPerPlace ?? this.sessionsPerPlace);
+        isLoading: isLoading ?? this.isLoading,
+        allSessions: allSessions ?? this.allSessions,
+        sessionsPerPlace: sessionsPerPlace ?? this.sessionsPerPlace,
+      );
 }

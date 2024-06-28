@@ -35,29 +35,32 @@ class _StartSessionPartState extends State<StartSessionPart> {
               "Choisir une salle",
               style: Theme.of(context).textTheme.labelLarge,
             ),
-            BlocBuilder<PlaceBloc, PlaceBlocState>(
-              builder: (context, state) => DropdownMenu(
-                dropdownMenuEntries: state.places
-                    .map((place) => DropdownMenuEntry<Place>(
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: BlocBuilder<PlaceBloc, PlaceBlocState>(
+                builder: (context, state) => DropdownMenu(
+                  dropdownMenuEntries: state.places
+                      .map(
+                        (place) => DropdownMenuEntry<Place>(
                           value: place,
                           label: place.name,
-                        ))
-                    .toList(),
-                onSelected: (place) => setState(() => _place = place),
-                trailingIcon:
-                    state.isLoading ? const CircularProgressIndicator() : null,
+                        ),
+                      )
+                      .toList(),
+                  onSelected: (place) => setState(() => _place = place),
+                  trailingIcon: state.isLoading
+                      ? const CircularProgressIndicator()
+                      : null,
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20),
-              child: FilledButton(
-                onPressed: _place != null
-                    ? () => context
-                        .read<SessionBloc>()
-                        .add(StartSessionEvent(_place!))
-                    : null,
-                child: const Text("Démarrer une session"),
-              ),
+            FilledButton(
+              onPressed: _place != null
+                  ? () => context
+                      .read<SessionBloc>()
+                      .add(StartSessionEvent(_place!))
+                  : null,
+              child: const Text("Démarrer une session"),
             ),
           ],
         ),
