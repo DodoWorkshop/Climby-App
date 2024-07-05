@@ -63,10 +63,15 @@ class GeneralStats extends StatelessWidget {
           ],
         ),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Salle la plus fréquentée: ",
                 style: Theme.of(context).textTheme.labelMedium),
-            Text(mostFrequentedPlace.name),
+            Expanded(
+                child: Text(
+              mostFrequentedPlace.name,
+              softWrap: true,
+            )),
           ],
         ),
         Row(
