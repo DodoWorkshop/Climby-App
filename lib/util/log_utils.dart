@@ -11,6 +11,13 @@ abstract final class LogUtils {
   }
 
   static void logError(Object e) {
-    developer.log(e.toString(), error: e);
+    switch (e) {
+      case Error e:
+        developer.log("An error occurred: ${e.toString()}",
+            error: e, stackTrace: e.stackTrace);
+        break;
+      default:
+        developer.log("An error occurred: ${e.toString()}");
+    }
   }
 }

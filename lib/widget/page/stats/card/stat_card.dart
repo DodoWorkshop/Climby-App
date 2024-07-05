@@ -1,3 +1,4 @@
+import 'package:climby/util/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,6 +35,13 @@ class StatCard extends StatelessWidget {
               return FutureBuilder(
                   future: builder.call(context, state),
                   builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      LogUtils.logError(snapshot.error!);
+                      return const Center(
+                        child: Text("Une erreur s'est produite"),
+                      );
+                    }
+
                     if (!snapshot.hasData) {
                       return const Center(
                         child: Text("Construction en cours..."),

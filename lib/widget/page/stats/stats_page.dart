@@ -2,6 +2,7 @@ import 'package:climby/bloc/stat_bloc.dart';
 import 'package:climby/widget/page/stats/card/difficulty_chart.dart';
 import 'package:climby/widget/page/stats/card/general_stats.dart';
 import 'package:climby/widget/page/stats/card/score_chart.dart';
+import 'package:climby/widget/page/stats/card/session_efficiency_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,6 +35,8 @@ class _StatsPageState extends State<StatsPage> {
               const GeneralStats(),
               Container(height: 12),
               const ScoreChart(),
+              Container(height: 12),
+              const SessionEfficiencyChart(),
               Container(height: 12),
               const DifficultyChart(),
             ],

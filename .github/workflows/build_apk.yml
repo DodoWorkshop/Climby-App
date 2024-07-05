@@ -16,6 +16,14 @@ jobs:
         with:
           flutter-version: '3.22.1'
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+          check-latest: true
+
       - name: Create .env file
         run: |
           echo "AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}" >> .env
