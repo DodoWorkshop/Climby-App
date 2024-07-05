@@ -132,6 +132,8 @@ class _ScoreChartState extends State<ScoreChart> {
                   )
                 ],
               ),
+              curve: Curves.linear,
+              duration: const Duration(milliseconds: 400),
             ),
           ),
           Container(height: 20),
