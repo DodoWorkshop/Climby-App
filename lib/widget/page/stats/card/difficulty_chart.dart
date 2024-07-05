@@ -81,7 +81,7 @@ class _DifficultyChartState extends State<DifficultyChart> {
           .toList();
 
       return AspectRatio(
-        aspectRatio: 1,
+        aspectRatio: 1.3,
         child: Column(
           children: [
             Expanded(
