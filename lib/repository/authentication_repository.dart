@@ -15,12 +15,7 @@ class AuthenticationRepository {
         .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
         .login(
           useHTTPS: false,
-          scopes: {
-            'openid',
-            'profile',
-            'email',
-            'write:places',
-          },
+          scopes: {'openid', 'profile', 'email', 'offline_access'},
           audience: dotenv.env['AUTH0_AUDIENCE'],
         );
   }
@@ -29,5 +24,9 @@ class AuthenticationRepository {
     await auth0
         .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
         .logout(useHTTPS: true);
+  }
+
+  Future<UserProfile> getUserProfile(String jwt) {
+    return auth0.api.userProfile(accessToken: jwt);
   }
 }

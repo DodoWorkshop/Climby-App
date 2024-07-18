@@ -18,15 +18,15 @@ class LoginPage extends StatelessWidget {
               style: TextStyle(fontSize: 80, fontWeight: FontWeight.bold),
             ),
             FutureBuilder(
-              future: PackageInfo.fromPlatform(),
-              builder: (context, snapshot) {
-                if(snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                }
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  }
 
-                return Text("v${snapshot.hasData ? snapshot.data!.version : "?.?.?"}");
-              }
-            ),
+                  return Text(
+                      "v${snapshot.hasData ? snapshot.data!.version : "?.?.?"}");
+                }),
             Container(height: 10),
             const Image(image: AssetImage('assets/logo.png')),
             Container(height: 10),

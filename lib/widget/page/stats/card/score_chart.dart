@@ -13,6 +13,7 @@ class ScoreChart extends StatefulWidget {
 
 class _ScoreChartState extends State<ScoreChart> {
   bool _meanEnabled = false;
+  bool _totalScore = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,8 @@ class _ScoreChartState extends State<ScoreChart> {
     var best = 0;
     final points =
         state.allSessions.where((session) => session.isDone).map((session) {
-      final score = session.computeScore();
+      final score =
+          _totalScore ? session.computeScore() : session.computeScorePerHour();
       if (score > best) {
         best = score;
       }
@@ -55,7 +57,7 @@ class _ScoreChartState extends State<ScoreChart> {
     final maxX = points.last.x + 1000000000;
 
     return AspectRatio(
-      aspectRatio: 1.4,
+      aspectRatio: 1.1,
       child: Column(
         children: [
           Expanded(
@@ -66,7 +68,7 @@ class _ScoreChartState extends State<ScoreChart> {
                   topTitles: const AxisTitles(),
                   leftTitles: AxisTitles(
                     axisNameWidget: Text(
-                      "Score",
+                      _totalScore ? "Score" : "Score par heure",
                       style: theme.textTheme.labelMedium,
                     ),
                     sideTitles: const SideTitles(
@@ -137,13 +139,18 @@ class _ScoreChartState extends State<ScoreChart> {
             ),
           ),
           Container(height: 20),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FilledButton(
                 onPressed: () => setState(() => _meanEnabled = !_meanEnabled),
-                child:
-                    Text("${_meanEnabled ? 'Cacher' : 'Afficher'} la moyenne"),
+                child: Text(
+                  "${_meanEnabled ? 'Cacher' : 'Afficher'} la moyenne",
+                ),
+              ),
+              FilledButton(
+                onPressed: () => setState(() => _totalScore = !_totalScore),
+                child: Text(_totalScore ? 'Score par heure' : 'Somme score'),
               )
             ],
           )

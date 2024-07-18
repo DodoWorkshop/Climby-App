@@ -97,6 +97,13 @@ class SessionBloc extends Bloc<SessionBlocEvent, SessionBlocState> {
             final session = activeSessionState.activeSession.copyWith(
                 entries: activeSessionState.activeSession.entries + [entry]);
             emit(ActiveSessionState(session));
+
+            _notificationBloc.add(
+              SendSuccessNotificationEvent(
+                "Bloc ajouté",
+                leadingIcon: Icons.add,
+              ),
+            );
           },
           onError: (e) => _notificationBloc.add(
             SendErrorNotificationEvent(
