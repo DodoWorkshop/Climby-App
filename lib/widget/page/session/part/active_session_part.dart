@@ -43,7 +43,7 @@ class _ActiveSessionPartState extends State<ActiveSessionPart> {
                   FilledButton(
                     onPressed: () => _handleSessionEnd(context, session),
                     child: const Text('Terminer la session'),
-                  )
+                  ),
                 ],
               ),
             ],
@@ -173,7 +173,7 @@ class _ActiveSessionPartState extends State<ActiveSessionPart> {
                       thumbVisibility: true,
                       child: ListView(
                         controller: _scrollController,
-                        children: session.entries
+                        children: session.entries.reversed
                             .map(
                               (entry) => ListTile(
                                 leading: Icon(

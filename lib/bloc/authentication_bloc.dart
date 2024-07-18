@@ -32,16 +32,20 @@ class AuthenticationBloc
 
     final jwt = prefs.getString(JWT_KEY);
     if (jwt != null) {
-      final userProfile = await _authenticationRepository.getUserProfile(jwt);
+      try {
+        final userProfile = await _authenticationRepository.getUserProfile(jwt);
+        _apiClient.token = jwt;
 
-      _apiClient.token = jwt;
+        final newState = AuthenticatedState(userProfile, jwt);
 
-      final newState = AuthenticatedState(userProfile, jwt);
+        emit(newState);
 
-      emit(newState);
-
-      _notificationBloc
-          .add(SendSuccessNotificationEvent("Reconnexion réussie"));
+        _notificationBloc
+            .add(SendSuccessNotificationEvent("Reconnexion réussie"));
+      } catch (e) {
+        LogUtils.logError(e);
+        emit(UnauthenticatedBloc(false));
+      }
     } else {
       emit(UnauthenticatedBloc(false));
     }

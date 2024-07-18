@@ -12,8 +12,7 @@ class AuthenticationController extends StatefulWidget {
   State<StatefulWidget> createState() => _AuthenticationControllerState();
 }
 
-class _AuthenticationControllerState extends State<AuthenticationController>{
-
+class _AuthenticationControllerState extends State<AuthenticationController> {
   @override
   void initState() {
     context.read<AuthenticationBloc>().add(AutoLoginEvent());

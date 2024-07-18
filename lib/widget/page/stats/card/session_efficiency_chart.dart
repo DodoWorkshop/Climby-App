@@ -32,8 +32,10 @@ class SessionEfficiencyChart extends StatelessWidget {
         state.allSessions.fold(<Tuple<int, int>>[], (entries, session) {
       if (session.isDone) {
         for (var entry in session.entries) {
-          final minutesSinceStart =
-              entry.createdAt.minute - session.startedAt.minute;
+          final minutesSinceStart = Duration(
+            milliseconds: entry.createdAt.millisecondsSinceEpoch -
+                session.startedAt.millisecondsSinceEpoch,
+          ).inMinutes;
           entries.add(Tuple(minutesSinceStart, entry.difficultyLevel.score));
         }
       }

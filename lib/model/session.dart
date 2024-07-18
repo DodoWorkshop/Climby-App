@@ -28,4 +28,22 @@ class Session with _$Session {
       : entries
           .map((entry) => entry.difficultyLevel.score)
           .reduce((score1, score2) => score1 + score2);
+
+  // TODO: cache this
+  int computeScorePerHour() {
+    if (!isDone) return 0;
+
+    final score = computeScore();
+
+    if (score == 0) return 0;
+
+    final durationInMinutes = Duration(
+            milliseconds: endedAt!.millisecondsSinceEpoch -
+                startedAt.millisecondsSinceEpoch)
+        .inMinutes;
+
+    if (durationInMinutes == 0) return 0;
+
+    return ((score * 60) / durationInMinutes).round();
+  }
 }
