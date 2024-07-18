@@ -19,7 +19,7 @@ class AuthenticationRepository {
             'openid',
             'profile',
             'email',
-            'write:places',
+            'offline_access'
           },
           audience: dotenv.env['AUTH0_AUDIENCE'],
         );
@@ -29,5 +29,10 @@ class AuthenticationRepository {
     await auth0
         .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
         .logout(useHTTPS: true);
+  }
+
+  Future<UserProfile> getUserProfile(String jwt) {
+    return auth0.api.userProfile(accessToken: jwt);
+    //return auth0.api.renewCredentials(refreshToken: refreshToken);
   }
 }
